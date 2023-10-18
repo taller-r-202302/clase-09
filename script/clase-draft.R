@@ -51,13 +51,20 @@ theme_light() + theme(axis.text.x=element_blank()) +
 labs(title = "Inglabo por sexo" , x="" , y="Ingreso" , fill="Sexo")
 
 ## Ingreso por sexo y tipo de contrato
+geih <- geih %>% 
+        mutate(genero=ifelse(p6020==1,"Hombre","Mujer"),
+               rango=case_when(p6040<18~"Ninos",
+                               p6040>=18 &p6040<=28~"Jovenes",
+                               p6040>28~"Adultos"))
+  
+
 geih %>% 
-group_by(p6020,p6450) %>%
+group_by(genero,rango) %>%
 summarise(mean_wage=mean(inglabo,na.rm=T)/1000000) %>%
 ggplot(data=. , 
-       aes(x=as.factor(p6020) , y=mean_wage , fill=as.factor(p6020))) +
-geom_bar(position="dodge", stat="identity") +
-facet_wrap(~as.factor(p6450)) +
+       aes(x=as.factor(genero) , y=mean_wage , fill=as.factor(genero))) +
+geom_bar(position="dodge", stat="identity" , show.legend = F) +
+facet_wrap(~as.factor(rango)) +
 theme_light() 
 
 
